@@ -14,22 +14,25 @@ username = 'Automation'
 password = '4690ftp'
 ftp = ftplib.FTP(server, username, password)
 uploaddate = strftime("%Y-%m-%d-%H-%M")
-arttrun_dir = 'f:/arttruns'
+arttrun_dir = 'f:/arttchecks'
+customer = sys.argv[1]
+current_case = sys.argv[2]
 
 for root, dirs, files in os.walk(arttrun_dir, topdown=True):
     relative = root[len(arttrun_dir):].lstrip(os.sep)
     for d in dirs:
         try:
-            ftp.mkd(os.path.join(relative, d))
+            ftp.mkd(os.path.join(relative, customer + '\\' + uploaddate + '_' + d))
         except:
             pass
 
     for f in files:
-        try:
-            ftp.cwd(relative)
-            ftp.storbinary('STOR ' + uploaddate + '_' + f, open(os.path.join(arttrun_dir, relative, f), 'rb'))
-            ftp.cwd('/')
-        except:
-            sys.exit("***Unable to send automation run via FTP!***")
+        print(f)
+        # try:
+        ftp.cwd(customer + "\\" + uploaddate + '_' + current_case)
+        ftp.storbinary('STOR ' + f, open(os.path.join(arttrun_dir, relative, f), 'rb'))
+        ftp.cwd('/')
+        # except:
+        #     sys.exit("***Unable to send automation run via FTP!***")
 
 ftp.quit()

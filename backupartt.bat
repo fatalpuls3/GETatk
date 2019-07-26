@@ -41,7 +41,7 @@ cd \
 cd \
 cd rtmzips
 cd %2
-adxzudir -c %1 c:\regressn\
+adxnszzl -c  -AD -r %1 c:\regressn\*.*
 
 echo ============================================
 echo Backing up item record file from C or D file
@@ -49,8 +49,8 @@ echo ============================================
 c:
 cd \
 cd \
-if exist c:\adx_idt1\eamitemr.dat copy c:\adx_idt1\eamitemr.dat f:\rtmzips\eamitemc.dat
-if exist d:\adx_idt1\eamitemr.dat copy d:\adx_idt1\eamitemr.dat f:\rtmzips\eamitemd.dat
+if exist c:\adx_idt1\eamitemr.dat copy c:\adx_idt1\eamitemr.dat f:\rtmzips\%2\eamitemc.dat
+if exist d:\adx_idt1\eamitemr.dat copy d:\adx_idt1\eamitemr.dat f:\rtmzips\%2\eamitemd.dat
 
 if not exist e:\000 GOTO end
 echo ==========================

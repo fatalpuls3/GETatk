@@ -7,19 +7,18 @@ def getargs():
     global arttrun_path
     global customer
     global zipfile
-    global current_case_dir
     global current_case
-    if len(sys.argv) < 2:
-        sys.exit('You did not provide enough arguments, please specify customer name')
-    elif len(sys.argv) == 2:
-        arttrun_path = 'f:/arttruns/'
-        current_case_file = 'c:/regressn/cases/current.cse'
-        with open(current_case_file, 'r') as f:
-            current_case = f.readline()
+    argcount = len(sys.argv)
+
+    if argcount != 3:
+        sys.exit('You did not provide enough arguments, please specify customer name and test case')
+    elif argcount == 3:
+        arttrun_path = 'f:/arttchecks/'
+        current_case = sys.argv[2]
         print('Current Case: ' + current_case)
         customer = sys.argv[1]
-        zipfile = current_case + '.zip'
-        current_case_dir = str(current_case + '.DIR')
+    else:
+        print("Process ended, nothing was processed")
 
 
 def makedirs():
@@ -34,27 +33,27 @@ def makedirs():
         print("Expected directories exist")
 
 
-def backuprun():
-    print('=================================')
-    print('Backing up ARTT Runs')
-    print('=================================')
-    os.chdir(arttrun_path + customer)
-    print('Current Case: ' + current_case)
-    os4690.system('adxnszzl -c -AD -r ' + zipfile + ' c:/REGRESSN/CASES/' + current_case_dir + "/*.*")
+# def backuprun():
+#     print('=================================')
+#     print('Backing up ARTT Runs')
+#     print('=================================')
+#     os.chdir(arttrun_path + customer)
+#     print('Current Case: ' + current_case)
+#     os4690.system('adxnszzl -c -AD -r ' + zipfile + arttrun_path + customer + "/" + current_case)
 
 
 def ftpnotify():
     print('============================================')
     print('ARTT Run backed up!')
-    print('Location: f:/arttruns')
-    os4690.system('python2 f:/tools/artt_ftp.py')
+    print('Location: f:/arttcheck')
+    os4690.system('python2 f:/tools/artt_ftp.py ' + customer + ' ' + current_case)
     print('ARTT Run FTP complete!')
-    os4690.system('python2 f:/tools/artt_notify.py')
+    os4690.system('python2 f:/tools/artt_notify.py ' + customer + ' ' + current_case)
     print('Notification sent for ARTT Run!')
     print('============================================')
 
 
 getargs()
-makedirs()
-backuprun()
+# makedirs()
+# backuprun()
 ftpnotify()

@@ -13,21 +13,16 @@ password = 'QAtest123'
 emailfile = '.\\emails.txt'  # email file with one address per line for script to send notification to
 defaddr = 'jason.miller@getronics.com'  # Default email for TO if emails.txt doesnt exist
 toaddrs = []
+current_case = sys.argv[2]
+customer = sys.argv[1]
 
 
 def createmessage():
-    global current_case
     global msg
-    current_case_file = 'C:\\REGRESSN\\CASES\\CURRENT.CSE'
-    if not os.path.exists(current_case_file):
-        sys.exit('Unable to find current case file')
-    else:
-        with open(current_case_file) as csfile:
-            for line in csfile:
-                current_case = line
     rundatetime = strftime("%Y-%m-%d - %H:%M:%S")
-    msg = 'Subject: {}\n\n{}'.format(current_case + ' - Automated Test Run Completed!',
-                                     'Test Case: ' + current_case +
+    msg = 'Subject: {}\n\n{}'.format(customer + ' - ' + current_case + ' - Automated Test Run Completed!',
+                                     '\nCustomer: ' + customer +
+                                     '\nTest Case: ' + current_case +
                                      '\nRun Date/Time: ' + rundatetime +
                                      '\n\n***Pull all automated run logs back to your system for triage.***')
 

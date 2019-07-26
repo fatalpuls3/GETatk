@@ -1,7 +1,8 @@
 # Automated Test Tool Check Script
 # Author: Jason Miller
-# 6/17/2019
-# Version 4.3
+# 7/25/2019
+# Version 5.0
+# Removed ability to run on windows, only for use with AFTER.bat with arguments to python scripts
 
 # !/usr/bin/env python2
 # checkartt.py
@@ -11,59 +12,135 @@ import fileinput
 import filecmp
 import re
 
-
-
-
-if not os.path.exists(".\\ARTT_Runs"):
-    os.makedirs(".\\ARTT_Runs")
 dateformat = re.compile('..\/..\/.....:....')
 
 
 def get_test_case():
+    argcount = len(sys.argv)
     version = str(sys.version[:1])
 
     # This function enables the script to loop through test cases or perform check on one test case
     global current_case
     global tcloop
-    tcloop = 0
-    if version == '2':
-        current_case = raw_input("Please type in test case name: ")
-    elif version == '3':
-        current_case = input("Please type in test case name: ")
-    else:
-        current_case = input("Please type in test case name: ")
-    print(current_case)
+    global arttrun_path
+    global customer
+    global zipfile
+    global current_case_dir
+    global current_case
 
-    if current_case.upper() == 'ALL':
-        tcloop = 1
-        tclist = []
-        test_case_dirs = os.listdir("C:\\regressn\\cases\\")
-        for d in test_case_dirs:
-            d = d.upper()
-            if d.endswith(".DIR"):
-                d = d.rstrip(".DIR")
-                tclist.append(d)
-            else:
-                pass
-        print("Test cases being inespected:")
-        print(tclist)
-        for t in tclist:
-            if not os.path.exists(".\\ARTT_Runs\\" + t):
-                os.mkdir('.\\ARTT_Runs\\' + t)
-            current_case = t
+    if os.path.exists("f:/rtm"):
+        if not os.path.exists("f:/arttchecks"):
+            os.makedirs("f:/arttchecks")
+            arttrun_path = "f:/arttchecks/"
+        else:
+            arttrun_path = "f:/arttchecks/"
+    elif not os.path.exists("f:/rtm"):
+        os.makedirs(".\\arttchecks")
+
+    if argcount != 3:
+        tcloop = 0
+        # THIS IS COMMENTED OUT SO THIS WILL NOT WORK ON WINDOWS AT THIS TIME
+        # FOR USE WITH 4690 SYSTEM ONLY IN AFTER.BAT
+        # if version == '2':
+        #     current_case = raw_input("Please type in test case name: ")
+        #     current_case = current_case.lower()
+        # elif version == '3':
+        #     current_case = input("Please type in test case name: ")
+        #     current_case = current_case.lower()
+        # else:
+        #     current_case = input("Please type in test case name: ")
+        #     current_case = current_case.lower()
+        # print(current_case)
+        #
+        # if current_case.lower() == 'all':
+        #     tcloop = 1
+        #     tclist = []
+        #     test_case_dirs = os.listdir("C:\\regressn\\cases\\")
+        #     for d in test_case_dirs:
+        #         d = d.upper()
+        #         if d.endswith(".DIR"):
+        #             d = d.rstrip(".DIR")
+        #             tclist.append(d)
+        #         else:
+        #             pass
+        #     print("Test cases being inspected:")
+        #     print(tclist)
+        #     for t in tclist:
+        #         if not os.path.exists(".\\arttchecks\\" + t):
+        #             os.mkdir('.\\arttchecks\\' + t)
+        #         current_case = t
+        #         checks()
+        #         if run_2x20_checks is False:
+        #             pass
+        #         elif run_cr_valuechecks is False:
+        #             pass
+        #         elif run_ledger_valuechecks() is False:
+        #             pass
+        #         elif run_regreport_valuechecks() is False:
+        #             pass
+        # else:
+        #     if not os.path.exists('.\\arttchecks\\' + current_case):
+        #         os.mkdir('.\\arttchecks\\' + current_case)
+        #     checks()
+    elif argcount == 3:  # This is for use with 4690 after.bat
+        current_case = sys.argv[2]
+        if not os.path.exists(arttrun_path + current_case):
+            os.mkdir(arttrun_path + current_case)
             checks()
-            if run_2x20_checks is False:
-                pass
-            elif run_cr_valuechecks is False:
-                pass
-            elif run_ledger_valuechecks() is False:
-                pass
-            elif run_regreport_valuechecks() is False:
-                pass
+        else:
+            checks()
     else:
-        if not os.path.exists('.\\ARTT_Runs\\' + current_case):
-            os.mkdir('.\\ARTT_Runs\\' + current_case)
-        checks()
+        print("Process ended, nothing processed")
+
+# OLD GET_TEST_CASE FUNCTION
+# def get_test_case():
+#     version = str(sys.version[:1])
+#
+#     # This function enables the script to loop through test cases or perform check on one test case
+#     global current_case
+#     global tcloop
+#     tcloop = 0
+#     if version == '2':
+#         current_case = raw_input("Please type in test case name: ")
+#         current_case = current_case.lower()
+#     elif version == '3':
+#         current_case = input("Please type in test case name: ")
+#         current_case = current_case.lower()
+#     else:
+#         current_case = input("Please type in test case name: ")
+#         current_case = current_case.lower()
+#     print(current_case)
+#
+#     if current_case.lower() == 'all':
+#         tcloop = 1
+#         tclist = []
+#         test_case_dirs = os.listdir("C:\\regressn\\cases\\")
+#         for d in test_case_dirs:
+#             d = d.upper()
+#             if d.endswith(".DIR"):
+#                 d = d.rstrip(".DIR")
+#                 tclist.append(d)
+#             else:
+#                 pass
+#         print("Test cases being inspected:")
+#         print(tclist)
+#         for t in tclist:
+#             if not os.path.exists(".\\arttchecks\\" + t):
+#                 os.mkdir('.\\arttchecks\\' + t)
+#             current_case = t
+#             checks()
+#             if run_2x20_checks is False:
+#                 pass
+#             elif run_cr_valuechecks is False:
+#                 pass
+#             elif run_ledger_valuechecks() is False:
+#                 pass
+#             elif run_regreport_valuechecks() is False:
+#                 pass
+#     else:
+#         if not os.path.exists('.\\arttchecks\\' + current_case):
+#             os.mkdir('.\\arttchecks\\' + current_case)
+#         checks()
 
 
 def run_2x20_checks():
@@ -152,10 +229,10 @@ def run_2x20_checks():
 
 def run_cr_valuechecks():
     global crvalueerror
-    counter1 = 0  # Counter for Original Line Number from Original File
-    counter2 = 0
-    trunvalues = ('.\\ARTT_Runs\\' + test_case + '\\' + test_case + '_cr_this.txt')
-    grunvalues = ('.\\ARTT_Runs\\' + test_case + '\\' + test_case + '_cr_gold.txt')
+    # counter1 = 0  # Counter for Original Line Number from Original File
+    # counter2 = 0
+    trunvalues = (arttrun_path + test_case + '\\' + test_case + '_cr_this.txt')
+    grunvalues = (arttrun_path + test_case + '\\' + test_case + '_cr_gold.txt')
 
     if not (os.path.isfile(cr_file_this)):
         return False
@@ -170,34 +247,35 @@ def run_cr_valuechecks():
 
     # This looks for specific values in customer reciept and outputs to files for comparisons
     for line in fileinput.input(cr_file_this):
-        counter1 += 1  # Incrementing line number from original file
+        # counter1+= 1  # Incrementing line number from original file
         if "PrintLine: '        TAX" in line:
             with open(trunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter1) + ' - ' + line)
+                # f.write('OriginalLineNo: ' + str(counter1) + ' - ' + line)
+                f.write(line)
         elif "PrintLine: '   **** BALANCE" in line:
             with open(trunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter1) + ' - ' + line)
+                f.write(line)
         elif "PrintLine: '        CASH" in line:
             with open(trunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter1) + ' - ' + line)
+                f.write(line)
         elif "PrintLine: '        CHANGE" in line:
             with open(trunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter1) + ' - ' + line)
+                f.write(line)
 
     for line in fileinput.input(cr_file_golden):
-        counter2 += 1  # Incrementing line number from original file
+        # counter2 += 1  # Incrementing line number from original file
         if "PrintLine: '        TAX" in line:
             with open(grunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter2) + ' - ' + line)
+                f.write(line)
         elif "PrintLine: '   **** BALANCE" in line:
             with open(grunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter2) + ' - ' + line)
+                f.write(line)
         elif "PrintLine: '        CASH" in line:
             with open(grunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter2) + ' - ' + line)
+                f.write(line)
         elif "PrintLine: '        CHANGE" in line:
             with open(grunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter2) + ' - ' + line)
+                f.write(line)
 
     if filecmp.cmp(grunvalues, trunvalues, shallow=False):
         crvalueerror = 0
@@ -207,10 +285,10 @@ def run_cr_valuechecks():
 
 def run_2x20_valuechecks():
     global twobyvalueerror
-    counter1 = 0  # Counter for Original Line Number from Original File
-    counter2 = 0
-    trunvalues = ('.\\ARTT_Runs\\' + test_case + '\\' + test_case + '_2x20_this.txt')
-    grunvalues = ('.\\ARTT_Runs\\' + test_case + '\\' + test_case + '_2x20_gold.txt')
+    # counter1 = 0  # Counter for Original Line Number from Original File
+    # counter2 = 0
+    trunvalues = (arttrun_path + test_case + '\\' + test_case + '_2x20_this.txt')
+    grunvalues = (arttrun_path + test_case + '\\' + test_case + '_2x20_gold.txt')
 
     if not (os.path.isfile(two_by_twenty_file)):
         return False
@@ -225,46 +303,46 @@ def run_2x20_valuechecks():
 
     # This looks for specific values in 2x20 file and outputs to files for comparisons
     for line in fileinput.input(twoby_file_this):
-        counter1 += 1  # Incrementing line number from original file
+        # counter1 += 1  # Incrementing line number from original file
         if "==================================================" in line:
             with open(trunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter1) + ' -' + line)
+                f.write(line)
         elif "<<<<<< *" in line:
             with open(trunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter1) + ' -' + line)
+                f.write(line)
         elif "		TAX DUE" in line:
             with open(trunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter1) + ' -' + line)
+                f.write(line)
         elif "		TOTAL" in line:
             with open(trunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter1) + ' -' + line)
+                f.write(line)
         elif "		CASH" in line:
             with open(trunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter1) + ' -' + line)
+                f.write(line)
         elif "		CHANGE" in line:
             with open(trunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter1) + ' -' + line)
+                f.write(line)
 
     for line in fileinput.input(twoby_file_golden):
-        counter2 += 1  # Incrementing line number from original file
+        # counter2 += 1  # Incrementing line number from original file
         if "==================================================" in line:
             with open(grunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter2) + ' -' + line)
+                f.write(line)
         elif "<<<<<< *" in line:
             with open(grunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter2) + ' -' + line)
+                f.write(line)
         elif "		TAX DUE" in line:
             with open(grunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter2) + ' -' + line)
+                f.write(line)
         elif "		TOTAL" in line:
             with open(grunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter2) + ' -' + line)
+                f.write(line)
         elif "		CASH" in line:
             with open(grunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter2) + ' -' + line)
+                f.write(line)
         elif "		CHANGE" in line:
             with open(grunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter2) + ' -' + line)
+                f.write(line)
 
     if filecmp.cmp(grunvalues, trunvalues, shallow=False):
         twobyvalueerror = 0
@@ -274,10 +352,10 @@ def run_2x20_valuechecks():
 
 def run_ledger_valuechecks():
     global ldgrvalueerror
-    counter1 = 0  # Counter for Original Line Number from Original File
-    counter2 = 0
-    trunvalues = ('.\\ARTT_Runs\\' + test_case + '\\' + test_case + '_ldgr_this.txt')
-    grunvalues = ('.\\ARTT_Runs\\' + test_case + '\\' + test_case + '_ldgr_gold.txt')
+    # counter1 = 0  # Counter for Original Line Number from Original File
+    # counter2 = 0
+    trunvalues = (arttrun_path + test_case + '\\' + test_case + '_ldgr_this.txt')
+    grunvalues = (arttrun_path + test_case + '\\' + test_case + '_ldgr_gold.txt')
 
     if not (os.path.isfile(ldgr_file_this)):
         return False
@@ -291,34 +369,34 @@ def run_ledger_valuechecks():
     open(grunvalues, 'w').close()
 
     for line in fileinput.input(ldgr_file_this):
-        counter1 += 1  # Incrementing line number from original file
+        # counter1 += 1  # Incrementing line number from original file
         if "AMT" in line:
             with open(trunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter1) + ' - ' + line)
+                f.write(line)
         elif "SALES" in line:
             with open(trunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter1) + ' - ' + line)
+                f.write(line)
         elif "TENDER" in line:
             with open(trunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter1) + ' - ' + line)
+                f.write(line)
         elif "TOTAL" in line:
             with open(trunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter1) + ' - ' + line)
+                f.write(line)
 
     for line in fileinput.input(ldgr_file_golden):
-        counter2 += 1  # Incrementing line number from original file
+        # counter2 += 1  # Incrementing line number from original file
         if "AMT" in line:
             with open(grunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter2) + ' - ' + line)
+                f.write(line)
         elif "SALES" in line:
             with open(grunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter2) + ' - ' + line)
+                f.write(line)
         elif "TENDER" in line:
             with open(grunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter2) + ' - ' + line)
+                f.write(line)
         elif "TOTAL" in line:
             with open(grunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter2) + ' - ' + line)
+                f.write(line)
 
     if filecmp.cmp(grunvalues, trunvalues, shallow=False):
         ldgrvalueerror = 0
@@ -328,10 +406,10 @@ def run_ledger_valuechecks():
 
 def run_regreport_valuechecks():
     global rgrrptvalueerror
-    counter1 = 0  # Counter for Original Line Number from Original File
-    counter2 = 0
-    trunvalues = ('.\\ARTT_Runs\\' + test_case + '\\' + test_case + '_rgrrpt_this.txt')
-    grunvalues = ('.\\ARTT_Runs\\' + test_case + '\\' + test_case + '_rgrrpt_gold.txt')
+    # counter1 = 0  # Counter for Original Line Number from Original File
+    # counter2 = 0
+    trunvalues = (arttrun_path + test_case + '\\' + test_case + '_rgrrpt_this.txt')
+    grunvalues = (arttrun_path + test_case + '\\' + test_case + '_rgrrpt_gold.txt')
 
     if not (os.path.isfile(rgr_file_this)):
         return False
@@ -345,68 +423,68 @@ def run_regreport_valuechecks():
     open(grunvalues, 'w').close()
 
     for line in fileinput.input(rgr_file_this):
-        counter1 += 1  # Incrementing line number from original file
+        # counter1 += 1  # Incrementing line number from original file
         if dateformat.search(line) is not None:
             pass
         elif "RING TIME" in line:
             line = line[:38] + '\n'
             with open(trunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter1) + ' - ' + line)
+                f.write(line)
         elif "TENDER TIME" in line:
             line = line[:38] + '\n'
             with open(trunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter1) + ' - ' + line)
+                f.write(line)
         elif "OTHER TIME" in line:
             line = line[:38] + '\n'
             with open(trunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter1) + ' - ' + line)
+                f.write(line)
         elif "TOTAL TIME" in line:
             line = line[:38] + '\n'
             with open(trunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter1) + ' - ' + line)
+                f.write(line)
         elif "POINTS" in line:
             line = line[:40] + '\n'
             with open(trunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter1) + ' - ' + line)
+                f.write(line)
         elif "BONUS" in line:
             line = line[:40] + '\n'
             with open(trunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter1) + ' - ' + line)
+                f.write(line)
         else:
             with open(trunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter1) + ' - ' + line)
+                f.write(line)
 
     for line in fileinput.input(rgr_file_golden):
-        counter2 += 1  # Incrementing line number from original file
+        # counter2 += 1  # Incrementing line number from original file
         if dateformat.search(line)is not None:
             pass
         elif "RING TIME" in line:
             line = line[:38] + '\n'
             with open(grunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter2) + ' - ' + line)
+                f.write(line)
         elif "TENDER TIME" in line:
             line = line[:38] + '\n'
             with open(grunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter2) + ' - ' + line)
+                f.write(line)
         elif "OTHER TIME" in line:
             line = line[:38] + '\n'
             with open(grunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter2) + ' - ' + line)
+                f.write(line)
         elif "TOTAL TIME" in line:
             line = line[:38] + '\n'
             with open(grunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter2) + ' - ' + line)
+                f.write(line)
         elif "POINTS" in line:
             line = line[:40] + '\n'
             with open(grunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter2) + ' - ' + line)
+                f.write(line)
         elif "BONUS" in line:
             line = line[:40] + '\n'
             with open(grunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter2) + ' - ' + line)
+                f.write(line)
         else:
             with open(grunvalues, 'a') as f:
-                f.write('OriginalLineNo: ' + str(counter2) + ' - ' + line)
+                f.write(line)
 
     if filecmp.cmp(trunvalues, grunvalues, shallow=False):
         rgrrptvalueerror = 0
@@ -516,8 +594,7 @@ def arttcheckreport():
 
     print("----------------------------------------------------")
     print("")
-    print('<<< Please see ' + current_case + '_results.txt file for results >>>')
-
+    
 
 def checks():
     global test_case_dir
@@ -600,8 +677,8 @@ def checks():
 
     # test_case_check()
 
-    results_file = ('.\\ARTT_Runs\\' + current_case + '\\' + current_case + '_results.txt')
-    sys.stdout = open('.\\ARTT_Runs\\' + current_case + '\\' + current_case + '_results.txt', "w")
+    results_file = (arttrun_path + current_case + '\\' + current_case + '_results.txt')
+    sys.stdout = open(arttrun_path + current_case + '\\' + current_case + '_results.txt', "w")
 
     # Peform checks on data
     run_2x20_checks()
@@ -611,5 +688,6 @@ def checks():
     run_ledger_valuechecks()
     run_regreport_valuechecks()
     arttcheckreport()
+
 
 get_test_case()
