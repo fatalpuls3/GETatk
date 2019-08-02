@@ -13,7 +13,9 @@ echo =================================
 c:
 cd \
 cd \
-adxnszzl -xo e:\000\%2\%1
+cd regressn
+cd cases
+adxzudir -x e:\000\rtmzips\%2\%1 c:\regressn\
 
 echo =================================
 echo Deploying ARTT cases complete!

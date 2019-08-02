@@ -20,6 +20,7 @@ else:
         print(dst_dir)
         if not os.path.exists(dst_dir):
             os.makedirs(dst_dir)
+            print('Copying ' + dst_dir)
         for file_ in files:
             src_file = os.path.join(src_dir, file_)
             dst_file = os.path.join(dst_dir, file_)
