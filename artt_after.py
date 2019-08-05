@@ -11,6 +11,13 @@ after_run = 'python2 f:/tools/artt_run.py '
 after_batch = '/AFTER.BAT'
 default_after = 'f:/tools/after.bat'
 tc_base_dir = 'c:/REGRESSN/CASES'
+getatk_install = 'f:/tools/getatk.inst'
+
+
+def getatkinstall():
+    if not os.path.exists(getatk_install):
+        with open(getatk_install, 'w') as i:
+            i.write("GETatk Installed for - " + customer)
 
 
 def getargs():
@@ -37,6 +44,7 @@ def createfile():
     #         for f in dirs:
     #             if '/setup/' in f:
     #                 dirs.remove(f)
+
     for d in dirs:
         if os.path.exists(d + after_batch):
             try:
@@ -79,5 +87,10 @@ def createfile():
     print(dirs)
 
 
+if os.path.exists(getatk_install):
+    sys.exit("GETatk already installed, not performing updates on after.bat files")
+else:
+    pass
 getargs()
+getatkinstall()
 createfile()
