@@ -13,10 +13,10 @@ server = '172.22.28.141'
 username = 'Automation'
 password = '4690ftp'
 ftp = ftplib.FTP(server, username, password)
-uploaddate = strftime("%Y-%m-%d-%H-%M")
-arttrun_dir = 'f:/arttchecks'
 customer = sys.argv[1]
 current_case = (sys.argv[2].upper())
+uploaddate = strftime("%Y-%m-%d-%H-%M")
+arttrun_dir = 'f:/arttchecks'
 fullpath = (arttrun_dir + '/' + current_case)
 
 # for root, dirs, files in os.walk(arttrun_dir, topdown=True):
@@ -42,5 +42,6 @@ try:
             continue
 except:
     pass
+
 
 ftp.quit()

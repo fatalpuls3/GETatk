@@ -17,6 +17,7 @@ from time import strftime
 customer = sys.argv[1]
 current_case = (sys.argv[2].upper())
 arttrun_dir = 'f:/arttchecks'
+arttrun_log = 'c:/regressn/cases/' + current_case + '.DIR/logs/run.log'
 fullpath = (arttrun_dir + '/' + current_case)
 files = []
 login = 'GetronicsAutomation@gmail.com'
@@ -58,6 +59,7 @@ def gather_run_results():
                 continue
     except:
         pass
+
 
 
 def send_mail(send_from, send_to, subject, text, files=None,

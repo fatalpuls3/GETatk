@@ -11,6 +11,7 @@ import sys
 import fileinput
 import filecmp
 import re
+import shutil
 
 dateformat = re.compile('..\/..\/.....:....')
 
@@ -87,8 +88,12 @@ def get_test_case():
         if not os.path.exists(arttrun_path + current_case):
             os.mkdir(arttrun_path + current_case)
             checks()
+            run_copy_runlog()
+
         else:
             checks()
+            run_copy_runlog()
+
     else:
         print("Process ended, nothing processed")
 
@@ -214,7 +219,12 @@ def run_2x20_checks():
     else:
         negativetrans = 0
 
-    if "ITEMNOTFOUND=0" in open(case_readme).read().upper():
+    if "ITEMNOTFOUND" not in open(case_readme).read().upper():
+        if "ITEM NOT FOUND" in open(two_by_twenty_file).read() or "B026" in open(two_by_twenty_file).read():
+            itemnotfound = 1
+        else:
+            itemnotfound = 0
+    elif "ITEMNOTFOUND=0" in open(case_readme).read().upper():
         if "ITEM NOT FOUND" in open(two_by_twenty_file).read() or "B026" in open(two_by_twenty_file).read():
             itemnotfound = 1
         else:
@@ -506,6 +516,12 @@ def run_cop_checks():
         cfg_copient = 0
 
 
+def run_copy_runlog():
+    # Looking for run.log in the current case logs directory
+    if os.path.exists(case_runlog):
+        shutil.copyfile(case_runlog, results_base_dir + '\\run.txt')
+
+
 def arttcheckreport():
     # We print the on screen report here for user to get a preliminary results screen
     # stdout is printed to _result.txt file
@@ -632,6 +648,8 @@ def checks():
     global cr_file_this
     global ldgr_file_this
     global rgr_file_this
+    global case_runlog
+    global results_base_dir
 
     # Directory variables and File variables
     test_case_dir = ("C:\\regressn\\cases\\" + current_case + ".DIR" + "\\THIS.RUN\\")
@@ -643,6 +661,7 @@ def checks():
     case_readme = (test_case_root + "\\" + current_case + ".RME")
     case_errortxt = (test_case_root + "\\LOGS\\ERROR.TXT")
     case_saverun = (test_case_root + "\\LOGS\\SAVE.RUN")
+    case_runlog = (test_case_root + "\\LOGS\\RUN.LOG")
 
     # Files for use with negative, change due, key sequence checks
     two_by_twenty_file = (test_case_dir + "2x20.001")
@@ -678,6 +697,7 @@ def checks():
     # test_case_check()
 
     results_file = (arttrun_path + current_case + '\\' + current_case + '_results.txt')
+    results_base_dir = (arttrun_path + current_case)
     sys.stdout = open(arttrun_path + current_case + '\\' + current_case + '_results.txt', "w")
 
     # Peform checks on data
@@ -687,6 +707,7 @@ def checks():
     run_2x20_valuechecks()
     run_ledger_valuechecks()
     run_regreport_valuechecks()
+    run_copy_runlog()
     arttcheckreport()
 
 
