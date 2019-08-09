@@ -18,7 +18,7 @@ dateformat = re.compile('..\/..\/.....:....')
 
 def get_test_case():
     argcount = len(sys.argv)
-    version = str(sys.version[:1])
+    # version = str(sys.version[:1])
 
     # This function enables the script to loop through test cases or perform check on one test case
     global current_case
@@ -88,11 +88,11 @@ def get_test_case():
         if not os.path.exists(arttrun_path + current_case):
             os.mkdir(arttrun_path + current_case)
             checks()
-            run_copy_runlog()
+            # run_copy_runlog()
 
         else:
             checks()
-            run_copy_runlog()
+            # run_copy_runlog()
 
     else:
         print("Process ended, nothing processed")
@@ -707,7 +707,7 @@ def checks():
     run_2x20_valuechecks()
     run_ledger_valuechecks()
     run_regreport_valuechecks()
-    run_copy_runlog()
+    # run_copy_runlog()
     arttcheckreport()
 
 

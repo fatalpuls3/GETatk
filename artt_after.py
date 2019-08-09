@@ -50,8 +50,8 @@ def createfile():
             try:
                 if '.DIR' in d.upper():
                     testcase = d.upper()
-                    testcase = testcase.rstrip('./DIR/SETUP')
-                    testcase = testcase.lstrip('C:/REGRESSN/CASES')
+                    testcase = testcase.replace('.DIR/SETUP', '')
+                    testcase = testcase.replace('C:/REGRESSN/CASES/', '')
                     with open(d + after_batch, 'a') as a:
                         a.write('\n')
                         a.write('REM File has been edited by artt_after.py\n')
@@ -69,8 +69,8 @@ def createfile():
             try:
                 if '.DIR' in d.upper():
                     testcase = d.upper()
-                    testcase = testcase.rstrip('./DIR/SETUP')
-                    testcase = testcase.lstrip('C:/REGRESSN/CASES')
+                    testcase = testcase.replace('.DIR/SETUP', '')
+                    testcase = testcase.replace('C:/REGRESSN/CASES/', '')
                     with open(d + after_batch, 'rw+') as a:
                         a.writelines('REM File has been edited by artt_after.py\n')
                         a.writelines('REM for use with customer ' + customer + ' test case ' + testcase + '\n')
